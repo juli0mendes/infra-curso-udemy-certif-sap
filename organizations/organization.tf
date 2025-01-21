@@ -1,5 +1,8 @@
 resource "aws_organizations_organization" "organization" {
   feature_set = "ALL"
+  enabled_policy_types = [
+    "SERVICE_CONTROL_POLICY"
+  ]
 }
 
 resource "aws_organizations_account" "dev_account" {
@@ -30,7 +33,6 @@ resource "aws_organizations_account" "sysop_account" {
   name      = "sysop-juli0mendes"
   email     = "juuliomendes3@gmail.com"
   role_name = "OrganizationAccountAccessRole"
-  parent_id = aws_organizations_organizational_unit.rio_de_janeiro_ou.id
 
   tags = {
     Environment = "SysOps"
@@ -43,16 +45,17 @@ resource "aws_organizations_organizational_unit" "rio_de_janeiro_ou" {
   parent_id = aws_organizations_organization.organization.roots[0].id
 }
 
-resource "aws_organizations_policy" "allow_all" {
-  name        = "AllowAllPolicy"
-  description = "Allows all actions"
+resource "aws_organizations_policy" "deny_s3_remove_bucket_policy" {
+  name        = "DenyS3RemoveBucket"
+  description = "Deny S3 Remove Bucket Policy"
   content     = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Effect": "Allow",
-      "Action": "*",
+      "Sid": "DenyS3RemoveBucket",
+      "Effect": "Deny",
+      "Action": "s3:DeleteBucket",
       "Resource": "*"
     }
   ]
@@ -61,7 +64,7 @@ EOF
   type = "SERVICE_CONTROL_POLICY"
 }
 
-resource "aws_organizations_policy_attachment" "sysop_allow_all" {
-  policy_id = aws_organizations_policy.allow_all.id
+resource "aws_organizations_policy_attachment" "sysop_deny_s3_remove_bucket_policy" {
+  policy_id = aws_organizations_policy.deny_s3_remove_bucket_policy.id
   target_id = aws_organizations_account.sysop_account.id
 }
