@@ -33,7 +33,7 @@ resource "aws_organizations_account" "sysop_account" {
   parent_id = aws_organizations_organizational_unit.rio_de_janeiro_ou.id
 
   tags = {
-    Environment = "Production"
+    Environment = "SysOps"
     Project     = "AWS Organization Automation"
   }
 }
