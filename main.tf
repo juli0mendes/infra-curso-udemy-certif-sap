@@ -9,5 +9,5 @@ module "iam_project" {
 
 module "organizations_project" {
   source = "./organizations-project"
-  count = var.enable_organizations_project ? 1 : 0
+  count  = var.enable_organizations_project ? 1 : 0
 }

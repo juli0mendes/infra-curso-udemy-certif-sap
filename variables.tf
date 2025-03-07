@@ -9,3 +9,9 @@ variable "enable_organizations_project" {
   type        = bool
   default     = true
 }
+
+variable "run_terraform_apply" {
+  description = "Control whether to run terraform apply or destroy"
+  type        = bool
+  default     = true
+}
