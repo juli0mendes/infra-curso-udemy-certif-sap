@@ -28,29 +28,16 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform plan -out=tfplan
 
-    - name: Terraform Show
-      run: terraform show
-
-    - name: Terraform Output
-      id: output
-      run: terraform output -json > output.json
-
     - name: Debug Output
       run: cat output.json
 
-    - name: Set Terraform Apply Variable
-      id: set_var
-      run: echo "RUN_TERRAFORM_APPLY=$(jq -r '.run_terraform_apply.value' output.json)" >> $GITHUB_ENV
-
     - name: Terraform Apply
-      if: ${{ env.RUN_TERRAFORM_APPLY == 'true' }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform apply -auto-approve tfplan
     
     - name: Terraform Destroy
-      if: ${{ env.RUN_TERRAFORM_APPLY != 'true' }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
