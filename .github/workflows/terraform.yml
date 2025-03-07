@@ -43,7 +43,10 @@ jobs:
 
     - name: Set Terraform Apply Variable
       id: set_var
-      run: echo "RUN_TERRAFORM_APPLY=$(jq -r '.run_terraform_apply.value' output.json)" >> $GITHUB_ENV
+      run: |
+        echo "Conteúdo do arquivo output.json:"
+        cat output.json
+        echo "RUN_TERRAFORM_APPLY=$(jq -r '.run_terraform_apply.value' output.json)" >> $GITHUB_ENV
 
     - name: Conditional Terraform Apply
       if: ${{ env.RUN_TERRAFORM_APPLY == 'true' }}
