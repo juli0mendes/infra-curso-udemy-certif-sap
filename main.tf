@@ -4,12 +4,10 @@ provider "aws" {
 
 module "iam_project" {
   source = "./iam-project"
-  count  = var.enable_iam_project ? 1 : 0
 }
 
 module "organizations_project" {
   source = "./organizations-project"
-  count  = var.enable_organizations_project ? 1 : 0
 }
 
 # Use a variável run_terraform_apply em algum lugar para garantir que ela seja considerada
