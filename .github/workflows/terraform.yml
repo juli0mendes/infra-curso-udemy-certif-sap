@@ -32,6 +32,9 @@ jobs:
       id: output
       run: terraform output -json > output.json
 
+    - name: Debug Output
+      run: cat output.json
+
     - name: Set Terraform Apply Variable
       id: set_var
       run: echo "RUN_TERRAFORM_APPLY=$(jq -r '.run_terraform_apply.value' output.json)" >> $GITHUB_ENV
