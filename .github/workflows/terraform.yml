@@ -28,6 +28,9 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform plan -out=tfplan
 
+    - name: Terraform Show
+      run: terraform show
+
     - name: Terraform Output
       id: output
       run: terraform output -json > output.json
@@ -52,6 +55,3 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform destroy -auto-approve
-
-    - name: Terraform Show
-      run: terraform show
