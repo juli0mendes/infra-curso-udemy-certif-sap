@@ -38,7 +38,6 @@ output "julio1_password" {
   value     = aws_iam_user_login_profile.julio1_login_profile.password
   sensitive = true
 }
-
 // para visualizar a senha gerada: terraform output -json julio1_password
 
 data "aws_iam_policy_document" "s3_access_policy" {
