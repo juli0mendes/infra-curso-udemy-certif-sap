@@ -3,7 +3,19 @@ resource "aws_iam_user" "julio2" {
   tags = {
     department = "code"
   }
+  permissions_boundary = aws_iam_policy.iam_access.arn
 }
+
+resource "aws_iam_user_login_profile" "julio2_login_profile" {
+  user                    = aws_iam_user.julio2.name
+  password_reset_required = true
+}
+
+output "julio2_password" {
+  value     = aws_iam_user_login_profile.julio2_login_profile.password
+  sensitive = true
+}
+// para visualizar a senha gerada: terraform output -json julio2_password
 
 data "aws_iam_policy_document" "full_iam_access" {
   statement {
@@ -33,7 +45,7 @@ resource "aws_iam_user_policy_attachment" "julio2_full_iam_access" {
   policy_arn = aws_iam_policy.full_iam_access.arn
 }
 
-data "iam_policy_document" "iam_policy_document" {
+data "aws_iam_policy_document" "iam_policy_document" {
   statement {
     sid = "IAMAccess"
 
@@ -76,8 +88,8 @@ data "iam_policy_document" "iam_policy_document" {
     ]
 
     resources = [
-      "arn:aws:iam::047780667251:user/*",
-      "arn:aws:iam::047780667251:role/*"
+      "arn:aws:iam::351302643189:user/*",
+      "arn:aws:iam::351302643189:role/*"
     ]
 
     condition {
@@ -142,5 +154,5 @@ resource "aws_iam_policy" "iam_access" {
   name        = "AI-PermissionsBoundary"
   path        = "/"
   description = "Policy to provide IAM access"
-  policy      = data.iam_policy_document.iam_policy_document.json
+  policy      = data.aws_iam_policy_document.iam_policy_document.json
 }
