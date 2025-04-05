@@ -43,18 +43,6 @@ jobs:
       id: output
       run: terraform output -json > output.json
 
-    - name: Set Infra Create Variable
-      id: set_var
-      run: |
-        echo "Conteúdo do arquivo output.json:"
-        cat output.json
-        infra_create=$(jq -r '.infra_create.value // empty' output.json)
-        if [ -z "$infra_create" ]; then
-          echo "Erro: O campo 'infra_create' não foi encontrado no arquivo output.json."
-          exit 1
-        fi
-        echo "INFRA_CREATE=$infra_create" >> $GITHUB_ENV
-
   terraform_feature:
     if: github.ref != 'refs/heads/main'
 
