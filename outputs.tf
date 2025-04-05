@@ -7,7 +7,3 @@
 #   value     = module.iam_project.julio2_password
 #   sensitive = true
 # }
-
-output "infra_create" {
-  value = var.infra_create
-}
