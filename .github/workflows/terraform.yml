@@ -23,8 +23,7 @@ jobs:
       id: read_config
       run: |
         infra_create=$(jq -r '.infra_create' config.json)
-        echo "INFRA_CREATE=$infra_create" >> $GITHUB_ENV
-
+        echo "infra_create=$infra_create" >> $GITHUB_OUTPUT
     - name: Terraform Init
       run: terraform init
 
@@ -35,14 +34,14 @@ jobs:
       run: terraform plan -out=tfplan
 
     - name: Terraform Apply
-      if: ${{ env.INFRA_CREATE == 'true' }}
+      if: ${{ steps.read_config.outputs.infra_create == 'true' }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform apply -auto-approve tfplan
 
     - name: Terraform Destroy
-      if: ${{ env.INFRA_CREATE != 'true' }}
+      if: ${{ steps.read_config.outputs.infra_create != 'true' }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
