@@ -34,7 +34,7 @@ jobs:
     - name: Set Infra Create Variable
       id: set_var
       run: |
-        echo "Conteúdo do arquivo output.json:"
+        echo "Contents of the output.json file:"
         cat output.json
         infra_create=$(jq -r '.infra_create.value' output.json)
         echo "INFRA_CREATE=$infra_create" >> $GITHUB_ENV
