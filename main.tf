@@ -2,10 +2,6 @@ provider "aws" {
   region = "us-east-1"
 }
 
-variable "infra_create" {
-  default = true # Altere para false se quiser executar o destroy
-}
-
 # module "iam_project" {
 #   source = "./iam-project"
 # }
