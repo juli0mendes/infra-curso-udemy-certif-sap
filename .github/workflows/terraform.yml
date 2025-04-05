@@ -30,16 +30,16 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform plan -out=tfplan
 
-    - name: Terraform Output
-      id: output
-      run: terraform output -json > output.json
-
-    - name: Set Infra Create Variable
+    - name: Extract Infra Create Variable
       id: set_var
       run: |
-        echo "Contents of the output.json file:"
-        cat output.json
-        infra_create=$(jq -r '.infra_create.value' output.json)
+        echo "Extracting infra_create from the Terraform plan..."
+        terraform show -json tfplan > plan.json
+        infra_create=$(jq -r '.variable_values.infra_create.value' plan.json)
+        if [ -z "$infra_create" ]; then
+          echo "Error: infra_create variable not found in the Terraform plan."
+          exit 1
+        fi
         echo "INFRA_CREATE=$infra_create" >> $GITHUB_ENV
 
     - name: Terraform Apply
