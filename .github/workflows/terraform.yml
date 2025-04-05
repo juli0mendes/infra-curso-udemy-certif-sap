@@ -23,8 +23,7 @@ jobs:
       id: read_config
       run: |
         infra_create=$(jq -r '.infra_create' config.json)
-        echo "::set-output name=infra_create::$infra_create"
-
+        echo "infra_create=$infra_create" >> $GITHUB_OUTPUT
     - name: Terraform Init
       run: terraform init
 
