@@ -18,6 +18,9 @@ jobs:
     - name: Set up Terraform
       uses: hashicorp/setup-terraform@v1
 
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
+
     - name: Terraform Init
       run: terraform init
 
@@ -27,21 +30,31 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform plan -out=tfplan
 
+    - name: Terraform Output
+      id: output
+      run: terraform output -json > output.json
+
+    - name: Set Infra Create Variable
+      id: set_var
+      run: |
+        echo "Contents of the output.json file:"
+        cat output.json
+        infra_create=$(jq -r '.infra_create.value' output.json)
+        echo "INFRA_CREATE=$infra_create" >> $GITHUB_ENV
+
     - name: Terraform Apply
+      if: ${{ env.INFRA_CREATE == 'true' }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform apply -auto-approve tfplan
-    
+
     - name: Terraform Destroy
+      if: ${{ env.INFRA_CREATE != 'true' }}
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: terraform destroy -auto-approve
-
-    - name: Terraform Output
-      id: output
-      run: terraform output -json > output.json
 
   terraform_feature:
     if: github.ref != 'refs/heads/main'
