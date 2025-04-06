@@ -1,3 +1,13 @@
+terraform {
+  backend "s3" {
+    bucket         = "juli0mendes-terraform-state-file"
+    key            = "terraform/state/infra-curso-udemy-certif-sap/terraform.tfstate"
+    region         = "us-east-1"
+    dynamodb_table = "terraform-locks"
+    encrypt        = true
+  }
+}
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -16,4 +26,8 @@ provider "aws" {
 
 module "vpc" {
   source = "./vpc"
+}
+
+module "remote_backend" {
+  source = "./remote-backend"
 }
