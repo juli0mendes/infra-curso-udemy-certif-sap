@@ -17,3 +17,7 @@ provider "aws" {
 module "vpc" {
   source = "./vpc"
 }
+
+module "remote_backend" {
+  source = "./remote-backend"
+}
