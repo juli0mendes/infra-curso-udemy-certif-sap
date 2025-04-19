@@ -14,7 +14,7 @@ resource "aws_subnet" "public_subnet" {
   availability_zone       = "us-east-1b"
 
   tags = {
-    "Name" = "subnet-a-public"
+    "Name" = "public-subnet-a"
   }
 }
 
@@ -24,7 +24,32 @@ resource "aws_subnet" "private_subnet" {
   availability_zone = "us-east-1a"
 
   tags = {
-    "Name" = "subnet-b-private"
+    "Name" = "private-subnet-b"
   }
 }
 
+resource "aws_route_table" "public_route_table" {
+  vpc_id = aws_vpc.vpc_a.id
+
+  tags = {
+    "Name" = "public-route-table"
+  }
+}
+
+resource "aws_route_table" "private_route_table" {
+  vpc_id = aws_vpc.vpc_a.id
+
+  tags = {
+    "Name" = "private-route-table"
+  }
+}
+
+resource "aws_route_table_association" "public_subnet_association" {
+  subnet_id      = aws_subnet.public_subnet.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "private_subnet_association" {
+  subnet_id      = aws_subnet.private_subnet.id
+  route_table_id = aws_route_table.private_route_table.id
+}
