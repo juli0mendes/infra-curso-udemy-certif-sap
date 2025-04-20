@@ -68,3 +68,96 @@ resource "aws_route" "public_route" {
   gateway_id             = aws_internet_gateway.internet_gateway.id
 }
 
+resource "aws_security_group" "webserver_sg" {
+  name        = "webserver-access"
+  description = "Allow SSH, HTTP, and HTTPS traffic"
+  vpc_id      = aws_vpc.vpc_a.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    "Name" = "webserver-access"
+  }
+}
+
+resource "aws_instance" "webserver" {
+  depends_on = [aws_security_group.webserver_sg]
+
+  ami                    = "ami-0e449927258d45bc4"
+  instance_type          = "t2.micro"
+  key_name               = "ec2-webserver"
+  subnet_id              = aws_subnet.public_subnet.id
+  vpc_security_group_ids = [aws_security_group.webserver_sg.id]
+
+  associate_public_ip_address = true
+
+  tags = {
+    "Name" = "webserver"
+  }
+}
+
+resource "aws_security_group" "database_sg" {
+  name        = "database-access"
+  description = "Allow traffic from webserver_sg"
+  vpc_id      = aws_vpc.vpc_a.id
+
+  ingress {
+    from_port       = 0
+    to_port         = 0
+    protocol        = "-1"
+    security_groups = [aws_security_group.webserver_sg.id]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  tags = {
+    "Name" = "database-access"
+  }
+}
+
+resource "aws_instance" "database" {
+  depends_on = [aws_security_group.database_sg]
+
+  ami                    = "ami-0e449927258d45bc4"
+  instance_type          = "t2.micro"
+  key_name               = "ec2-database"
+  subnet_id              = aws_subnet.private_subnet.id
+  vpc_security_group_ids = [aws_security_group.database_sg.id]
+
+  associate_public_ip_address = false
+
+  tags = {
+    "Name" = "database"
+  }
+}
