@@ -10,10 +10,10 @@ provider "aws" {
 #   source = "./organizations-project"
 # }
 
-# module "directory_service" {
-#   source = "./directory-service"
-# }
-
-module "vpc" {
-  source = "./vpc"
+module "directory_service" {
+  source = "./directory-service"
 }
+
+# module "vpc" {
+#   source = "./vpc"
+# }
