@@ -18,6 +18,6 @@ provider "aws" {
 #   source = "./vpc"
 # }
 
-module "compute" {
-  source = "./compute"  
-}
+# module "compute" {
+#   source = "./compute"  
+# }
