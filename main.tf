@@ -14,6 +14,10 @@ provider "aws" {
 #   source = "./directory-service"
 # }
 
-module "vpc" {
-  source = "./vpc"
+# module "vpc" {
+#   source = "./vpc"
+# }
+
+module "compute" {
+  source = "./compute"  
 }
